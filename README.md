@@ -28,8 +28,20 @@ See `.env.example` for the full list. Key variables:
 
 ## Deployment
 
-_To be documented once the CI/CD pipeline is set up._
+This application is automatically deployed via GitHub Actions on every push
+to the `main` branch. The workflow (`.github/workflows/deploy.yml`):
+
+1. Checks out the code
+2. Removes git metadata (not needed on the server)
+3. Installs Node.js and production dependencies
+4. Copies the code to the server via SCP
+5. Installs production dependencies on the server
+6. Restarts the app via PM2 (`pm2 restart backend-app`)
+7. Runs a health check against `/api/health`
+
+The server runs Nginx as a reverse proxy in front of the app (listening on
+`127.0.0.1:3000`), with HTTPS handled via Let's Encrypt (Certbot).
 
 ## Live Domain
 
-_To be added once assigned._
+https://muhammet-backend.team-vit-devops.nl
