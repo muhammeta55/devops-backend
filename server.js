@@ -32,7 +32,7 @@ app.get('/api/health', (req, res) => {
 // GET /api/info -> metadata about the running application
 app.get('/api/info', (req, res) => {
   res.json({
-    application: 'Backend Application',
+    application: 'Backend Application - Auto Deployed via CI/CD',
     version: APP_VERSION,
     environment: NODE_ENV,
   });
