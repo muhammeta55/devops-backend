@@ -3,6 +3,13 @@ const express = require('express');
 
 const app = express();
 
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', process.env.CORS_ORIGIN || '*');
+  res.header('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  next();
+});
+
 // PORT is read from environment variable, with a safe local default.
 // In production this will come from the server's environment, not from code.
 const PORT = process.env.PORT || 3000;
