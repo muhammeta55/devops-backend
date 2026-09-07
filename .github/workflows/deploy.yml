@@ -4,12 +4,23 @@ on:
   push:
     branches:
       - main
+      - develop
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Set environment variables
+        run: |
+          if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+            echo "DEPLOY_PATH=${{ secrets.DEPLOY_PATH }}" >> $GITHUB_ENV
+            echo "PM2_NAME=backend-app" >> $GITHUB_ENV
+          else
+            echo "DEPLOY_PATH=${{ secrets.STAGING_DEPLOY_PATH }}" >> $GITHUB_ENV
+            echo "PM2_NAME=backend-app-staging" >> $GITHUB_ENV
+          fi
+
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -32,7 +43,7 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: ${{ secrets.SERVER_PORT }}
           source: "."
-          target: ${{ secrets.DEPLOY_PATH }}
+          target: ${{ env.DEPLOY_PATH }}
           overwrite: true
 
       - name: Restart backend and health check
@@ -43,8 +54,8 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: ${{ secrets.SERVER_PORT }}
           script: |
-            cd ${{ secrets.DEPLOY_PATH }}
+            cd ${{ env.DEPLOY_PATH }}
             npm install --production
-            pm2 restart backend-app
+            pm2 restart ${{ env.PM2_NAME }}
             sleep 3
-            curl -f http://127.0.0.1:3000/api/health || exit 1
+            curl -f http://127.0.0.1:3000/api/health || curl -f http://127.0.0.1:3001/api/health || exit 1
