@@ -45,3 +45,10 @@ The server runs Nginx as a reverse proxy in front of the app (listening on
 ## Live Domain
 
 https://muhammet-backend.team-vit-devops.nl
+
+## Environments
+
+This project uses a branch-based deployment strategy:
+
+- `develop` branch → automatically deploys to the staging environment
+- `main` branch → automatically deploys to the production environment
