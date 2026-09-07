@@ -66,4 +66,23 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+// POST /api/words/import - toplu kelime ekleme
+router.post('/import', async (req, res) => {
+  try {
+    const { words } = req.body;
+
+    if (!Array.isArray(words) || words.length === 0) {
+      return res.status(400).json({ error: 'No words provided for import' });
+    }
+
+    const insertedWords = await Word.insertMany(words, { ordered: false });
+    res.status(201).json({
+      message: `${insertedWords.length} words imported successfully`,
+      count: insertedWords.length,
+    });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
 module.exports = router;
